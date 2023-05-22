@@ -98,9 +98,9 @@ section h2 span {
 }
 
 
-/* SEC02 Gallery
+/* SEC02 Gallery  多分不要
 ------------------------------------------------------------*/
-#sec02{
+/* #sec02{
 	padding: 0 !important;
 }
 
@@ -122,7 +122,7 @@ section h2 span {
 	display: block;
 	width: 100%;
 	height: auto;
-}
+} */
 
 
 /* RESPONSIVE 設定
@@ -317,7 +317,7 @@ section h2 span {
   	transform: rotate(-135deg);
   	-webkit-transform: rotate(-135deg);
 	} */
-	
+	/* ハンバーガーメニュー */
 
 	.panel{
 		width: 100%;
@@ -463,4 +463,8 @@ section h2 span {
 }
 .wrapper .button:nth-child(2):hover span {
   color: #e1306c;
+}
+
+.slider{
+  overflow: hidden;
 }
