@@ -406,7 +406,7 @@ body{
 }
 
 .wrapper .button:nth-child(1):hover .icon {
-	background: #1da1f2;
+	background: #000000;
 }
 .wrapper .button:nth-child(2):hover .icon {
   background: #e1306c;
