@@ -621,10 +621,3 @@ body {
     border-radius: 6px;
   }
 }
-
-/* 極小端末 ~ 横幅360px以下：1列で大きく表示 */
-@media (max-width: 360px) {
-  .stills-grid {
-    grid-template-columns: 1fr;
-  }
-}
