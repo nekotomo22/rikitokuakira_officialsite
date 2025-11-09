@@ -561,3 +561,70 @@ body {
 .slider {
   overflow: hidden;
 }
+
+.work-stills {
+  margin: 24px 0 40px;
+}
+
+.stills-grid {
+  --gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* PC: 3列 */
+  gap: var(--gap);
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stills-grid li {
+  margin: 0;
+}
+
+.stills-grid img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  /* 比率を統一して整列 */
+  object-fit: cover;
+  /* 余白なくトリミング */
+  border-radius: 8px;
+  /* 角丸で上品に */
+  display: block;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+/* ホバー演出（PC体験を少しリッチに） */
+@media (hover: hover) {
+  .stills-grid img:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+  }
+}
+
+/* タブレット ~ 横幅1024px以下：2列 */
+@media (max-width: 1024px) {
+  .stills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --gap: 10px;
+  }
+}
+
+/* スマホ ~ 横幅599px以下：2列/小さめギャップ */
+@media (max-width: 599px) {
+  .stills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --gap: 8px;
+  }
+
+  .stills-grid img {
+    border-radius: 6px;
+  }
+}
+
+/* 極小端末 ~ 横幅360px以下：1列で大きく表示 */
+@media (max-width: 360px) {
+  .stills-grid {
+    grid-template-columns: 1fr;
+  }
+}
