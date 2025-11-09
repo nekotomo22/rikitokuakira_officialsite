@@ -92,6 +92,7 @@ body {
   overflow-x: hidden;
   color: #000;
   background: #fff;
+  font-family: "Noto Sans JP", sans-serif;
 }
 
 a {
@@ -607,5 +608,50 @@ body {
   .stills-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     --gap: 10px;
+  }
+}
+
+/* ----- PC用：幅900px以上 ----- */
+@media (min-width: 900px) {
+
+  body {
+    font-size: 18px;
+    /* 基本文字サイズ：読みやすく */
+    line-height: 1.85;
+    /* 読み物として最適 */
+  }
+
+  /* セクション見出し H2 */
+  section>header h2 {
+    font-size: 24px;
+  }
+
+  /* サブ見出し H3 */
+  h3,
+  .work-heading {
+    font-size: 20px;
+  }
+
+  /* プロフィールの項目 */
+  .profile-list dt {
+    font-size: 17px;
+  }
+
+  .profile-list dd {
+    font-size: 18px;
+  }
+
+  /* タイムライン（出演歴） */
+  .timeline li {
+    font-size: 17px;
+  }
+
+  .timeline time {
+    font-size: 18px;
+  }
+
+  /* 本文のpタグ */
+  p {
+    font-size: 18px;
   }
 }
