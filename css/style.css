@@ -609,15 +609,3 @@ body {
     --gap: 10px;
   }
 }
-
-/* スマホ ~ 横幅599px以下：2列/小さめギャップ */
-@media (max-width: 599px) {
-  .stills-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    --gap: 8px;
-  }
-
-  .stills-grid img {
-    border-radius: 6px;
-  }
-}
