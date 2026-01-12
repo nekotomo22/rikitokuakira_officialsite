@@ -1,224 +1,655 @@
-<!doctype html>
-<html lang="ja">
+```html
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="description" content="力徳旺のホームページ">
-  <meta name="viewport" content="width=device-width">
-  <title>力徳旺のホームページ</title>
-  <link rel="stylesheet" media="all" href="css/style.css">
-  <link rel="stylesheet" href="css/refresh.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>力徳旺 (Rikitoku Akira) Official Site</title>
+  <meta name="description" content="俳優・力徳旺（りきとく あきら）のオフィシャルポートフォリオサイト。プロフィール、出演情報、活動履歴など。" />
 
-  <link rel="stylesheet" href="css/slick.css">
-  <link rel="stylesheet" href="css/slick-theme.css">
-  <link rel="icon" href="images/favicon.ico.jpg">
-  <link rel="apple-touch-icon" href="images/favicon.ico.jpg" sizes="180x180">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans JP"', 'sans-serif'],
+            serif: ['"Shippori Mincho"', 'serif'],
+          },
+          colors: {
+            black: '#1a1a1a',
+            dark: '#2d2d2d',
+            gray: '#888888',
+            light: '#f4f4f4',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* Custom Utilities */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Navigation Hover Effect */
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -4px;
+      left: 0;
+      background-color: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Initial states for animation (controlled by JS) */
+    .js-fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .js-reveal-text {
+      clip-path: inset(0 100% 0 0);
+    }
+
+    .js-image-zoom {
+      transform: scale(1.1);
+    }
+
+    /* Loading Screen */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background-color: #fff;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-text {
+      overflow: hidden;
+    }
+
+    .loader-text span {
+      display: inline-block;
+      transform: translateY(100%);
+    }
+
+    /* --- Profile slider: prevent image "weird shapes" by locking layout --- */
+    .slider-track {
+      will-change: transform;
+    }
+  </style>
 </head>
-<script src="js/lightbox.js"></script>
 
-<body id="top">
-  <div id="wrapper">
+<body class="bg-white text-black font-sans antialiased selection:bg-black selection:text-white overflow-x-hidden">
 
-    <div id="sidebar">
-      <div id="sidebarWrap">
-        <h1>力徳旺オフィシャルサイト</h1>
-        <nav id="mainnav">
-          <p id="menuWrap"><a id="menu"><span id="menuBtn"></span></a></p>
-          <div class="panel">
-            <ul>
-              <li><a href="#top">TOP</a></li>
-              <li><a href="#sec01">PROFILE</a></li>
-              <li><a href="#sec02">TOPICS</a></li>
-              <li><a href="#sec03">WORKS</a></li>
-              <li><a href="#sec04">CONTACT</a></li>
-            </ul>
-            <ul id="sns">
-              <li><a href="https://twitter.com/actor_ricky" target="_blank"><img src="images/iconX.png" width="20"
-                    height="20" alt="X"></a></li>
-              <li><a href="https://www.instagram.com/ricky_akira223/" target="_blank"><img src="images/iconInsta.png"
-                    width="20" height="20" alt="Instagram"></a></li>
-            </ul>
-          </div>
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="loader-text font-serif text-2xl tracking-[0.3em]"><span>RIKITOKU AKIRA</span></div>
+  </div>
+
+  <!-- Mobile Menu Button (〜lgまで表示) -->
+  <div
+    class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 p-4 lg:hidden flex justify-between items-center transition-transform duration-300"
+    id="mobileHeader">
+    <h1 class="text-lg font-serif tracking-widest">力徳旺</h1>
+    <button id="menuBtn" class="text-2xl focus:outline-none"><i class="fas fa-bars"></i></button>
+  </div>
+
+  <!-- Mobile Navigation Overlay (〜lgまで表示) -->
+  <div id="mobileNav"
+    class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-500 cubic-bezier(0.77, 0, 0.175, 1) lg:hidden flex flex-col justify-center items-center space-y-8">
+    <a href="#top" class="mobile-link text-2xl font-serif tracking-widest opacity-0 translate-y-4">TOP</a>
+    <a href="#profile" class="mobile-link text-2xl font-serif tracking-widest opacity-0 translate-y-4">PROFILE</a>
+    <a href="#topics" class="mobile-link text-2xl font-serif tracking-widest opacity-0 translate-y-4">TOPICS</a>
+    <a href="#works" class="mobile-link text-2xl font-serif tracking-widest opacity-0 translate-y-4">WORKS</a>
+    <a href="#contact" class="mobile-link text-2xl font-serif tracking-widest opacity-0 translate-y-4">CONTACT</a>
+    <button id="closeBtn" class="absolute top-6 right-6 text-3xl hover:rotate-90 transition-transform duration-300">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="flex flex-col lg:flex-row min-h-screen">
+
+    <!-- Sidebar (Desktop: lg以上のみ表示) -->
+    <aside
+      class="hidden lg:flex flex-col w-64 h-screen fixed top-0 left-0 bg-white border-r border-gray-100 px-8 py-12 justify-between z-10">
+      <div>
+        <h1 class="text-2xl font-serif tracking-[0.2em] mb-12">
+          <a href="#top" class="block hover:opacity-70 transition-opacity">力徳旺<br><span
+              class="text-xs font-sans tracking-normal text-gray-500 mt-2 block">RIKITOKU AKIRA</span></a>
+        </h1>
+        <nav class="flex flex-col space-y-6">
+          <a href="#top" class="nav-link text-sm tracking-widest hover:text-gray-600 transition-colors">TOP</a>
+          <a href="#profile" class="nav-link text-sm tracking-widest hover:text-gray-600 transition-colors">PROFILE</a>
+          <a href="#topics" class="nav-link text-sm tracking-widest hover:text-gray-600 transition-colors">TOPICS</a>
+          <a href="#works" class="nav-link text-sm tracking-widest hover:text-gray-600 transition-colors">WORKS</a>
+          <a href="#contact" class="nav-link text-sm tracking-widest hover:text-gray-600 transition-colors">CONTACT</a>
         </nav>
       </div>
-    </div>
+      <div class="flex space-x-6">
+        <a href="https://twitter.com/actor_ricky" target="_blank"
+          class="text-xs font-bold tracking-widest text-gray-400 hover:text-black transition-colors transform hover:-translate-y-1 duration-300 inline-block">X</a>
+        <a href="https://www.instagram.com/ricky_akira223/" target="_blank"
+          class="text-xs font-bold tracking-widest text-gray-400 hover:text-black transition-colors transform hover:-translate-y-1 duration-300 inline-block">INSTAGRAM</a>
+      </div>
+    </aside>
 
-    <div id="content">
-      <p id="mainImg"><img src="images/akira__home.jpg" alt="力徳旺のメイン画像"></p>
-      <!-- PROFILE -->
-      <section id="sec01">
-        <header>
-          <h2><span>PROFILE</span></h2>
-        </header>
-        <div class="innerS">
-          力徳旺(りきとく あきら)<br>
-          1997/02/23生まれ<br>
-          熊本県熊本市出身<br><br>
-          趣味：自主映画・アクション動画制作、散歩、料理<br>
-          特技：空手（初段）、バレー、高速手たたき<br>
-          資格：普通自動車運転免許、CGクリエイター検定ベーシック<br>
+    <!-- Main Content -->
+    <main class="w-full lg:pl-64 pt-16 lg:pt-0">
+
+      <!-- Hero Section -->
+      <section id="top" class="relative h-[60vh] lg:h-screen w-full overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+          <img src="images/akira__home.jpg"
+            onerror="this.src='https://placehold.co/1200x800/eeeeee/333333?text=Main+Visual'" alt="力徳旺 メイン画像"
+            class="hero-img w-full h-full object-cover object-top filter brightness-105 js-image-zoom origin-center" />
         </div>
-
-        <ul class="slider">
-          <li><img src="images/akira_pause.jpg" alt="akira_photo"></li>
-          <!-- <li><img src="images/akira_senzai2.jpg" alt="akira_photo"></li> -->
-          <li><img src="images/akira_monochrome.jpg" alt="akira_photo"></li>
-          <!-- <li><img src="images/akira_senzai1.jpg" alt="akira_photo"></li> -->
-          <li><img src="images/akira_sunset2.jpg" alt="akira_photo"></li>
-        </ul>
-
+        <div class="absolute bottom-10 left-6 lg:left-12 text-white drop-shadow-lg z-10">
+          <div class="overflow-hidden mb-2">
+            <p class="hero-text text-sm lg:text-base tracking-[0.3em] font-light transform translate-y-full">ACTOR</p>
+          </div>
+          <div class="overflow-hidden">
+            <h2 class="hero-text text-4xl lg:text-6xl font-serif font-bold tracking-widest transform translate-y-full">
+              力徳 旺</h2>
+          </div>
+        </div>
       </section>
 
-      <!-- TOPICS -->
-      <section id="sec02">
-        <header>
-          <h2><span>TOPICS</span></h2>
-        </header>
+      <!-- Profile Section -->
+      <section id="profile" class="py-20 px-6 lg:px-10 max-w-7xl mx-auto">
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
 
-        <ul class="news-list">
-          <li class="item">
-            <a>
-              <p class="date">2025/02/05~09</p>
-              <p class="category"><span>お知らせ</span></p>
-              <p class="title">舞台 Tokyo笹塚ボーイズ「ランプとブレーキ」</p>
-            </a>
-          </li>
-          <li class="item">
-            <a>
-              <p class="date">2024/10/12~14</p>
-              <p class="category"><span>お知らせ</span></p>
-              <p class="title">舞台 ココロゲソウ（心化粧）</p>
-            </a>
-          </li>
-          <li class="item">
-            <a>
-              <p class="date">2024/05/23~26</p>
-              <p class="category"><span>お知らせ</span></p>
-              <p class="title">劇団身体ゲンゴロウ第7回公演『最初の二十面相』</p>
-            </a>
-          </li>
-          <li class="item">
-            <a href="http://airstudio.jp/airstudio/top_230601a.html" target="_blank">
-              <p class="date">2023/06/01~05</p>
-              <p class="category"><span>お知らせ</span></p>
-              <p class="title">ACT企画公演vol.6『サンタクロース、舟を漕ぐ』Aチーム出演</p>
-            </a>
-          </li>
-          <li class="item">
-            <a href="#">
-              <p class="date">2023/05/21</p>
-              <p class="category"><span>お知らせ</span></p>
-              <p class="title">力徳旺公式ホームページ公開</p>
-            </a>
-          </li>
-        </ul>
-
-      </section>
-
-      <!-- WORKS -->
-      <section id="sec03">
-        <header>
-          <h2><span>WORKS</span></h2>
-        </header>
-        <div class="workdata">
-          <p class="work-heading">【短編映画】</p>
-          ・第5回フェローズフィルムフェスティバル特別招待作品『吉日』（2023年／監督：鳥澤空良）※主演：星野役<br>
-          ・第2回311ジコサポ映画祭監督賞受賞作品『ヱリ子・サガ』 （2023年／監督：石塚亘） 飛島詩音役<br>
-          ・MOVIES-HIGH 23上映作品『灯台の下で』（2023年／監督：林正春） ※主演：浩太役<br>
-          ・日本大学芸術学部放送学科卒業制作『ノイズ』（2024年／監督：米一碧海）新田役<br>
-          ・Yellow Film Labo制作作品『ほどけただけ』（2024年／監督：千脇大輔） ユウスケ役<br>
-          ・in-facto制作作品『5movies』（2024年） YouTuber役<br>
-          ・Yellow Film Labo制作作品『Intersection』（2025年／監督：千脇大輔） ※主演：佐藤清役<br><br>
-          <div class="work-stills">
-            <ul class="stills-grid">
-              <li><img src="images/akira_work9.jpg" alt="短編映画スチール 9" loading="lazy"></li>
-              <li><img src="images/akira_work10.jpg" alt="短編映画スチール 10" loading="lazy"></li>
-              <li><img src="images/akira_work11.jpg" alt="短編映画スチール 11" loading="lazy"></li>
-              <li><img src="images/akira_work12.jpg" alt="短編映画スチール 12" loading="lazy"></li>
-              <li><img src="images/akira_work13.jpg" alt="短編映画スチール 13" loading="lazy"></li>
-              <li><img src="images/akira_work14.jpg" alt="短編映画スチール 14" loading="lazy"></li>
-            </ul>
-          </div>
-          <p class="work-heading">【舞台】</p>
-          ・アンティークス vintage29『未来からの手紙』（2021年）坂上海斗役・三宅役／作・演出：岡崎貴宏<br>
-          ・Jr.5 第12回公演『硝子はオバサン』（2021年）河内幸太役／作・演出：小野健太郎<br>
-          ・アンティークス vintage30『この世が終わる前に』（2022年）ショウ役／作・演出：岡崎貴宏<br>
-          ・ACT 企画vol.6『サンタクロース、船を漕ぐ』（2023年）田崎旺太郎役／作：金丸知美・演出：西本健太郎<br>
-          ・劇団身体ゲンゴロウ第7回公演『最初の二十面相』（2024年）沼倉庄吉役／作・演出：菅井啓太<br>
-          ・セミコロン『ココロゲソウ（心化粧）』（2024年）オムニバス作品で全7作品の3作品出演（主演含む）／作・演出：藤井仁人<br>
-          ・TOKYO笹塚ボーイズ『ランプとブレーキ』（2025年）※主演：長居久志／作・演出：川上一樹<br>
-          ・avenir'e 8th create『音のない川』（2025年）男1役（4人芝居のメインキャストとして）／作・メインディレクター：池内風<br><br>
-          <div class="work-stills">
-            <ul class="stills-grid">
-              <li><img src="images/akira_work1.jpg" alt="短編映画スチール 9" loading="lazy"></li>
-              <li><img src="images/akira_work2.jpg" alt="短編映画スチール 10" loading="lazy"></li>
-              <li><img src="images/akira_work3.jpg" alt="短編映画スチール 11" loading="lazy"></li>
-              <li><img src="images/akira_work4.jpg" alt="短編映画スチール 12" loading="lazy"></li>
-              <li><img src="images/akira_work5.jpg" alt="短編映画スチール 13" loading="lazy"></li>
-              <li><img src="images/akira_work6.jpg" alt="短編映画スチール 14" loading="lazy"></li>
-            </ul>
-          </div>
-          <p class="work-heading">【MV】</p>
-          2022 松尾竜平『英雄』山岳タケシ監督 主演：青年役<br>
-          <div class="movie">
-            <iframe width="1204" height="687" src="https://www.youtube.com/embed/JKCxya08M3w"
-              title="英雄 - 松尾竜平 ［Original Song］" frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          <!-- Profile Text -->
+          <div class="w-full lg:w-5/12 order-2 lg:order-1 js-fade-up">
+            <h3 class="text-2xl font-serif tracking-widest mb-8 border-b border-black pb-2 inline-block">PROFILE</h3>
+            <div class="mb-8">
+              <p class="text-3xl font-serif mb-2">力徳 旺 <span class="text-sm font-sans text-gray-500 ml-2">RIKITOKU
+                  AKIRA</span></p>
+              <p class="text-gray-600">1997年2月23日生まれ / 熊本県熊本市出身</p>
+            </div>
+            <div class="space-y-4 text-sm leading-relaxed text-gray-700">
+              <div><span class="font-bold block text-black mb-1">趣味</span> 自主映画・アクション動画制作、散歩、料理</div>
+              <div><span class="font-bold block text-black mb-1">特技</span> 空手（初段）、バレー、高速手たたき</div>
+              <div><span class="font-bold block text-black mb-1">資格</span> 普通自動車運転免許、CGクリエイター検定ベーシック</div>
+            </div>
           </div>
 
-          2025 Noime。『蝉』 山岳タケシ監督 主演：青年役<br>
-          <div class="movie">
-            <iframe width="1204" height="687" src="https://www.youtube.com/embed/hCibbCSC-ds"
-              title="Noime。 - 蝉(Music Video)" frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-          </div>
+          <!-- Profile Images -->
+          <div class="w-full lg:w-7/12 order-1 lg:order-2 js-fade-up">
+            <div class="mx-auto w-full max-w-5xl">
+              <div class="relative overflow-hidden rounded-2xl shadow-sm bg-gray-100 aspect-[4/3] lg:aspect-video group"
+                id="profileSliderRoot" aria-label="Profile photo slider">
 
-          <p class="work-heading">【配信】</p>
-          2024 Netflix 内さまワールド #25<br>
-          アドリブコント企画仕掛け人役として出演（即興演技によるシチュエーション芝居）<br>
+                <div id="profileSlider"
+                  class="slider-track absolute inset-0 flex transition-transform duration-700 ease-out">
+                  <img src="images/akira_pause.jpg"
+                    onerror="this.src='https://placehold.co/800x600/e0e0e0/999999?text=Photo+1'" alt="Profile Photo 1"
+                    class="w-full h-full object-cover flex-shrink-0" />
+                  <img src="images/akira_monochrome.jpg"
+                    onerror="this.src='https://placehold.co/800x600/e0e0e0/999999?text=Photo+2'" alt="Profile Photo 2"
+                    class="w-full h-full object-cover flex-shrink-0" />
+                  <img src="images/akira_movie05.jpg"
+                    onerror="this.src='https://placehold.co/800x600/e0e0e0/999999?text=Photo+3'" alt="Profile Photo 3"
+                    class="w-full h-full object-cover flex-shrink-0" />
+                </div>
+
+                <button type="button" id="profilePrev"
+                  class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="前の画像">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button type="button" id="profileNext"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="次の画像">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                  <button class="profile-dot w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white" aria-label="画像1へ"
+                    data-index="0"></button>
+                  <button class="profile-dot w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white" aria-label="画像2へ"
+                    data-index="1"></button>
+                  <button class="profile-dot w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white" aria-label="画像3へ"
+                    data-index="2"></button>
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
-    </div>
+      </section>
+
+      <!-- Topics Section -->
+      <section id="topics" class="py-20 px-6 lg:px-10 bg-gray-50">
+        <div class="max-w-4xl mx-auto">
+          <h3 class="text-2xl font-serif tracking-widest mb-12 text-center js-fade-up">TOPICS</h3>
+          <div class="space-y-0">
+
+            <a href="#"
+              class="group flex flex-col lg:flex-row gap-2 lg:gap-6 py-6 border-b border-gray-200 hover:bg-white transition-colors px-4 js-fade-up">
+              <div class="flex items-center gap-4 lg:w-48 shrink-0">
+                <span
+                  class="text-xs font-bold text-white bg-black px-2 py-1 transform transition-transform group-hover:scale-105">お知らせ</span>
+                <span class="text-sm font-serif text-gray-500">2025.02.05-09</span>
+              </div>
+              <h4 class="text-base lg:text-lg group-hover:underline decoration-1 underline-offset-4 transition-colors">
+                舞台 Tokyo笹塚ボーイズ「ランプとブレーキ」</h4>
+            </a>
+
+            <a href="#"
+              class="group flex flex-col lg:flex-row gap-2 lg:gap-6 py-6 border-b border-gray-200 hover:bg-white transition-colors px-4 js-fade-up">
+              <div class="flex items-center gap-4 lg:w-48 shrink-0">
+                <span
+                  class="text-xs font-bold text-white bg-black px-2 py-1 transform transition-transform group-hover:scale-105">お知らせ</span>
+                <span class="text-sm font-serif text-gray-500">2024.10.12-14</span>
+              </div>
+              <h4 class="text-base lg:text-lg group-hover:underline decoration-1 underline-offset-4 transition-colors">
+                舞台 ココロゲソウ（心化粧）</h4>
+            </a>
+
+            <a href="#"
+              class="group flex flex-col lg:flex-row gap-2 lg:gap-6 py-6 border-b border-gray-200 hover:bg-white transition-colors px-4 js-fade-up">
+              <div class="flex items-center gap-4 lg:w-48 shrink-0">
+                <span
+                  class="text-xs font-bold text-white bg-black px-2 py-1 transform transition-transform group-hover:scale-105">お知らせ</span>
+                <span class="text-sm font-serif text-gray-500">2024.05.23-26</span>
+              </div>
+              <h4 class="text-base lg:text-lg group-hover:underline decoration-1 underline-offset-4 transition-colors">
+                劇団身体ゲンゴロウ第7回公演『最初の二十面相』</h4>
+            </a>
+
+            <a href="http://airstudio.jp/airstudio/top_230601a.html" target="_blank"
+              class="group flex flex-col lg:flex-row gap-2 lg:gap-6 py-6 border-b border-gray-200 hover:bg-white transition-colors px-4 js-fade-up">
+              <div class="flex items-center gap-4 lg:w-48 shrink-0">
+                <span
+                  class="text-xs font-bold text-white bg-black px-2 py-1 transform transition-transform group-hover:scale-105">お知らせ</span>
+                <span class="text-sm font-serif text-gray-500">2023.06.01-05</span>
+              </div>
+              <h4 class="text-base lg:text-lg group-hover:underline decoration-1 underline-offset-4 transition-colors">
+                ACT企画公演vol.6『サンタクロース、舟を漕ぐ』Aチーム出演</h4>
+            </a>
+
+            <a href="#"
+              class="group flex flex-col lg:flex-row gap-2 lg:gap-6 py-6 border-b border-gray-200 hover:bg-white transition-colors px-4 js-fade-up">
+              <div class="flex items-center gap-4 lg:w-48 shrink-0">
+                <span
+                  class="text-xs font-bold text-white bg-black px-2 py-1 transform transition-transform group-hover:scale-105">お知らせ</span>
+                <span class="text-sm font-serif text-gray-500">2023.05.21</span>
+              </div>
+              <h4 class="text-base lg:text-lg group-hover:underline decoration-1 underline-offset-4 transition-colors">
+                力徳旺公式ホームページ公開</h4>
+            </a>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Works Section -->
+      <section id="works" class="py-20 px-6 lg:px-10 max-w-7xl mx-auto">
+        <h3 class="text-2xl font-serif tracking-widest mb-16 text-center js-fade-up">WORKS</h3>
+
+        <!-- Short Films -->
+        <div class="mb-20">
+          <h4 class="text-lg font-bold border-l-4 border-black pl-3 mb-8 tracking-wider js-fade-up">短編映画</h4>
+          <div class="grid lg:grid-cols-2 gap-8">
+
+            <div class="space-y-4 js-fade-up">
+              <div class="bg-white border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow h-full">
+                <ul class="space-y-4 text-sm text-gray-800">
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『Intersection』<span
+                        class="text-xs font-normal bg-gray-200 px-1 ml-2">主演</span></span>
+                    <span class="text-gray-500">2025年 / 監督：千脇大輔 / Yellow Film Labo制作 / 佐藤清役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『ノイズ』</span>
+                    <span class="text-gray-500">2024年 / 監督：米一碧海 / 日本大学芸術学部放送学科卒業制作 / 新田役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『ほどけただけ』</span>
+                    <span class="text-gray-500">2024年 / 監督：千脇大輔 / Yellow Film Labo制作 / ユウスケ役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『5movies』</span>
+                    <span class="text-gray-500">2024年 / in-facto制作 / YouTuber役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『灯台の下で』<span
+                        class="text-xs font-normal bg-gray-200 px-1 ml-2">主演</span></span>
+                    <span class="text-gray-500">2023年 / 監督：林正春 / MOVIES-HIGH 23上映作品 / 浩太役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『吉日』<span
+                        class="text-xs font-normal bg-gray-200 px-1 ml-2">主演</span></span>
+                    <span class="text-gray-500">2023年 / 監督：鳥澤空良 / 第5回フェローズフィルムフェスティバル特別招待 / 星野役</span>
+                  </li>
+                  <li>
+                    <span class="font-bold block text-base mb-1">『ヱリ子・サガ』</span>
+                    <span class="text-gray-500">2023年 / 監督：石塚亘 / 第2回311ジコサポ映画祭監督賞 / 飛島詩音役</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 content-start js-fade-up">
+              <img src="images/akira_movie01.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Still+1'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_movie02.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Still+2'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_movie03.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Still+3'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_movie04.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Still+4'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_movie05.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Still+5'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_movie06.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Still+6'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Stage -->
+        <div class="mb-20">
+          <h4 class="text-lg font-bold border-l-4 border-black pl-3 mb-8 tracking-wider js-fade-up">舞台</h4>
+
+          <!-- ✅ スマホ: 経歴→ギャラリー / PC(lg以上): ギャラリー→経歴 -->
+          <div class="grid lg:grid-cols-2 gap-8">
+
+            <!-- 経歴（スマホ先 / PC後） -->
+            <div class="order-1 lg:order-2 space-y-4 js-fade-up">
+              <div class="bg-white border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow h-full">
+                <ul class="space-y-4 text-sm text-gray-800">
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『音のない川』</span>
+                    <span class="text-gray-500">2025年 / avenir'e 8th create / 作・演出：池内風 / 男1役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『ランプとブレーキ』<span
+                        class="text-xs font-normal bg-gray-200 px-1 ml-2">主演</span></span>
+                    <span class="text-gray-500">2025年 / TOKYO笹塚ボーイズ / 作・演出：川上一樹 / 長居久志役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『ココロゲソウ（心化粧）』</span>
+                    <span class="text-gray-500">2024年 / セミコロン / 作・演出：藤井仁人 / 3作品出演（主演含む）</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『最初の二十面相』</span>
+                    <span class="text-gray-500">2024年 / 劇団身体ゲンゴロウ / 作・演出：菅井啓太 / 沼倉庄吉役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『サンタクロース、舟を漕ぐ』</span>
+                    <span class="text-gray-500">2023年 / ACT企画 / 演出：西本健太郎 / 田崎旺太郎役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『この世が終わる前に』</span>
+                    <span class="text-gray-500">2022年 / アンティークス / 作・演出：岡崎貴宏 / ショウ役</span>
+                  </li>
+                  <li class="pb-2 border-b border-gray-100">
+                    <span class="font-bold block text-base mb-1">『硝子はオバサン』</span>
+                    <span class="text-gray-500">2021年 / Jr.5 / 作・演出：小野健太郎 / 河内幸太役</span>
+                  </li>
+                  <li>
+                    <span class="font-bold block text-base mb-1">『未来からの手紙』</span>
+                    <span class="text-gray-500">2021年 / アンティークス / 作・演出：岡崎貴宏 / 坂上海斗・三宅役</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- ギャラリー（スマホ後 / PC先） -->
+            <div class="order-2 lg:order-1 grid grid-cols-2 gap-3 content-start js-fade-up">
+              <img src="images/akira_work1.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Stage+1'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_work2.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Stage+2'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_work3.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Stage+3'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_work4.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Stage+4'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_work5.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Stage+5'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+              <img src="images/akira_work6.jpg" onerror="this.src='https://placehold.co/300x200/eee/ccc?text=Stage+6'"
+                class="w-full aspect-[4/3] lg:aspect-[3/2] object-cover rounded-xl grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105" />
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- MV & Streaming -->
+        <div class="grid lg:grid-cols-2 gap-12">
+          <div class="js-fade-up">
+            <h4 class="text-lg font-bold border-l-4 border-black pl-3 mb-6 tracking-wider">Music Video</h4>
+            <div class="space-y-8">
+              <div>
+                <p class="text-sm font-bold mb-2">2025 Noime。『蝉』 <span class="font-normal text-gray-500">主演：青年役 /
+                    監督：山岳タケシ</span></p>
+                <div class="aspect-video w-full bg-black">
+                  <iframe class="w-full h-full" src="https://www.youtube.com/embed/hCibbCSC-ds"
+                    title="Noime。 - 蝉(Music Video)" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-bold mb-2">2022 松尾竜平『英雄』 <span class="font-normal text-gray-500">主演：青年役 /
+                    監督：山岳タケシ</span></p>
+                <div class="aspect-video w-full bg-black">
+                  <iframe class="w-full h-full" src="https://www.youtube.com/embed/JKCxya08M3w" title="英雄 - 松尾竜平"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="js-fade-up">
+            <h4 class="text-lg font-bold border-l-4 border-black pl-3 mb-6 tracking-wider">Streaming / Others</h4>
+            <div class="bg-gray-50 p-6 border border-gray-100">
+              <div class="mb-4">
+                <h5 class="font-bold text-base mb-1">Netflix 『内さまワールド』 #25</h5>
+                <p class="text-sm text-gray-600 mb-2">2024年配信</p>
+                <p class="text-sm text-gray-700 leading-relaxed">アドリブコント企画仕掛け人役として出演<br>（即興演技によるシチュエーション芝居）</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="py-20 bg-black text-white text-center">
+        <div class="max-w-2xl mx-auto px-6">
+          <h3 class="text-2xl font-serif tracking-widest mb-12 js-fade-up">CONTACT</h3>
+          <p class="text-gray-400 mb-16 text-sm js-fade-up">出演依頼・お問い合わせはSNSのDMよりお願いいたします。</p>
+          <div class="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-16 js-fade-up">
+            <a href="https://twitter.com/actor_ricky" target="_blank"
+              class="text-xl tracking-[0.2em] font-light hover:text-gray-400 transition-colors relative group">X
+              <span
+                class="absolute -bottom-2 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="https://www.instagram.com/ricky_akira223/" target="_blank"
+              class="text-xl tracking-[0.2em] font-light hover:text-gray-400 transition-colors relative group">Instagram
+              <span
+                class="absolute -bottom-2 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="py-6 text-center border-t border-gray-100">
+        <p class="text-xs text-gray-400">&copy; 2024 Rikitoku Akira All Rights Reserved.</p>
+      </footer>
+
+    </main>
   </div>
 
-  </section>
+  <script>
+    // GSAP Registration
+    gsap.registerPlugin(ScrollTrigger);
 
-  <!-- 各種SNS -->
-  <section id="sec04">
-    <header>
-      <h2><span>CONTACT</span></h2>
-    </header>
+    // --- Loading Animation ---
+    const tlLoader = gsap.timeline();
+    tlLoader
+      .to(".loader-text span", { y: 0, duration: 1, ease: "power4.out" })
+      .to(".loader-text span", { y: "-100%", duration: 0.8, delay: 0.5, ease: "power4.in" })
+      .to("#loader", { height: 0, duration: 0.8, ease: "power4.inOut" }, "-=0.3")
+      // --- Hero Animation Start ---
+      .to(".hero-img", { scale: 1, duration: 2.5, ease: "power2.out" }, "-=0.8")
+      .to(".hero-text", { y: 0, duration: 1.2, stagger: 0.2, ease: "power3.out" }, "-=2.0");
 
-    <div class="wrapper">
-      <div class="button">
-        <div class="icon"><i class="fab fa-x"></i></div>
-        <span><a href="https://twitter.com/actor_ricky" target="_blank">X</a></span>
-      </div>
-      <div class="button">
-        <div class="icon"><i class="fab fa-instagram"></i></div>
-        <span><a href="https://www.instagram.com/ricky_akira223/" target="_blank">Instagram</a></span>
-      </div>
-    </div>
-    </div>
+    // --- Scroll Animations ---
+    gsap.utils.toArray('.js-fade-up').forEach(element => {
+      gsap.fromTo(element,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: element, start: "top 85%", toggleActions: "play none none reverse" }
+        }
+      );
+    });
 
-  </section>
+    // Parallax Effect for Hero Image
+    gsap.to(".hero-img", {
+      yPercent: 20,
+      ease: "none",
+      scrollTrigger: { trigger: "#top", start: "top top", end: "bottom top", scrub: true }
+    });
 
-  <footer id="footer">
-    Copyright(c) 2016 Sample Inc. All Rights Reserved. Design by <a href="http://f-tpl.com"
-      target="_blank">http://f-tpl.com</a><!-- ←クレジット表記を外す場合はシリアルキーが必要です http://f-tpl.com/credit/ -->
-  </footer>
+    // --- Mobile Menu Toggle ---
+    const menuBtn = document.getElementById('menuBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
 
-  </div>
-  </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/slick.min.js"></script>
-  <script src="js/main.js"></script>
+    function toggleMenu() {
+      const isHidden = mobileNav.classList.contains('translate-x-full');
+      if (isHidden) {
+        mobileNav.classList.remove('translate-x-full');
+        document.body.style.overflow = 'hidden';
+        gsap.to(".mobile-link", { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, delay: 0.3, ease: "power2.out" });
+      } else {
+        mobileNav.classList.add('translate-x-full');
+        document.body.style.overflow = '';
+        gsap.to(".mobile-link", { opacity: 0, y: 16, duration: 0.3 });
+      }
+    }
 
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtn.addEventListener('click', toggleMenu);
+    mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+    // --- Profile 3枚スライドショー ---
+    (function initProfileSlider() {
+      const root = document.getElementById('profileSliderRoot');
+      const track = document.getElementById('profileSlider');
+      const slides = track.querySelectorAll('img');
+      const prevBtn = document.getElementById('profilePrev');
+      const nextBtn = document.getElementById('profileNext');
+      const dots = document.querySelectorAll('.profile-dot');
+
+      if (!root || !track || slides.length === 0) return;
+
+      let index = 0;
+      let timer = null;
+      const INTERVAL = 4000;
+
+      function render() {
+        track.style.transform = `translateX(${-index * 100}%)`;
+        dots.forEach((d, i) => {
+          d.classList.toggle('bg-white', i === index);
+          d.classList.toggle('bg-white/60', i !== index);
+        });
+      }
+
+      function goTo(i) {
+        index = (i + slides.length) % slides.length;
+        render();
+      }
+
+      function next() { goTo(index + 1); }
+      function prev() { goTo(index - 1); }
+
+      function start() {
+        stop();
+        timer = setInterval(next, INTERVAL);
+      }
+
+      function stop() {
+        if (timer) clearInterval(timer);
+        timer = null;
+      }
+
+      nextBtn.addEventListener('click', () => { next(); start(); });
+      prevBtn.addEventListener('click', () => { prev(); start(); });
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          const i = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+          if (!Number.isNaN(i)) {
+            goTo(i);
+            start();
+          }
+        });
+      });
+
+      // hoverで自動切替を停止（PC向け）
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+
+      render();
+      start();
+    })();
+
+    // Topicsの「リンク先が # のやつ」だけ、トップに戻る挙動を止める
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (!a) return;
+
+      const href = (a.getAttribute('href') || '').trim();
+      if (href === '#' || href === '') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+  </script>
 </body>
 
 </html>
